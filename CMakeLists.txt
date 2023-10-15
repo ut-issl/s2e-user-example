@@ -2,10 +2,10 @@
 cmake_policy(SET CMP0048 NEW)
 cmake_minimum_required(VERSION 3.13)
 
-project(S2E_USER
+project(S2E_USER_EXAMPLE
   LANGUAGES CXX
-  DESCRIPTION "s2e-user: A sample of S2E User Side"
-  VERSION 7.0.0
+  DESCRIPTION "s2e-user-example: An example of S2E user side repository"
+  VERSION 0.0.0
 )
 
 # build config
@@ -27,16 +27,16 @@ if(WIN32)
 endif()
 
 ## set directory path
-set(S2E_CORE_DIR ../s2e-core)
+set(S2E_CORE_DIR ${CMAKE_CURRENT_LIST_DIR}/s2e-core)
 ## set directory path
 if(NOT DEFINED EXT_LIB_DIR)
-  set(EXT_LIB_DIR ../ExtLibraries)
+  set(EXT_LIB_DIR ${CMAKE_CURRENT_LIST_DIR}/ExtLibraries)
 endif()
 set(CSPICE_DIR ${EXT_LIB_DIR}/cspice)
 set(NRLMSISE00_DIR ${EXT_LIB_DIR}/nrlmsise00)
 
 if(NOT DEFINED FLIGHT_SW_DIR)
-  set(FLIGHT_SW_DIR ../FlightSW)
+  set(FLIGHT_SW_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../FlightSW)
 endif()
 if(NOT DEFINED C2A_NAME)
   set(C2A_NAME "c2a_oss")
@@ -44,15 +44,15 @@ endif()
 
 ## Directory path for ini files
 if(NOT DEFINED INI_FILE_DIR_FROM_EXE)
-  set(INI_FILE_DIR_FROM_EXE ../../data/sample/initialize_files)
+  set(INI_FILE_DIR_FROM_EXE ../../data/initialize_files)
 endif()
 
 if(NOT DEFINED EXT_LIB_DIR_FROM_EXE)
-  set(EXT_LIB_DIR_FROM_EXE ../../${EXT_LIB_DIR})
+  set(EXT_LIB_DIR_FROM_EXE ../../ExtLibraries)
 endif()
 
 if(NOT DEFINED CORE_DIR_FROM_EXE)
-  set(CORE_DIR_FROM_EXE ../../../s2e-core)
+  set(CORE_DIR_FROM_EXE ../../s2e-core)
 endif()
 
 ## options to use C2A
@@ -63,9 +63,9 @@ if(USE_C2A)
   add_definitions(-DSILS_FW)
   #include_directories of C2A
   include_directories(${C2A_DIR}/src)
-  include_directories(${S2E_CORE_DIR}/src/interface/sils)
 
   #add subdirectory
+  set(BUILD_C2A_AS_CXX ON)
   add_subdirectory(${C2A_DIR} C2A)
 endif()
 
@@ -85,25 +85,32 @@ include_directories(${NRLMSISE00_DIR}/src)
 include_directories(${S2E_CORE_DIR}/src)
 
 ## add_subdirectories
-add_subdirectory(${S2E_CORE_DIR}/src/simulation s2e_core/simulation)
+add_subdirectory(${S2E_CORE_DIR}/src/components s2e_core/components)
+add_subdirectory(${S2E_CORE_DIR}/src/disturbances s2e_core/disturbances)
+add_subdirectory(${S2E_CORE_DIR}/src/dynamics s2e_core/dynamics)
 add_subdirectory(${S2E_CORE_DIR}/src/environment/global s2e_core/environment/global)
 add_subdirectory(${S2E_CORE_DIR}/src/environment/local s2e_core/environment/local)
-add_subdirectory(${S2E_CORE_DIR}/src/dynamics s2e_core/dynamics)
-add_subdirectory(${S2E_CORE_DIR}/src/disturbances s2e_core/disturbances)
-add_subdirectory(${S2E_CORE_DIR}/src/components s2e_core/components)
 add_subdirectory(${S2E_CORE_DIR}/src/library s2e_core/library)
+add_subdirectory(${S2E_CORE_DIR}/src/simulation s2e_core/simulation)
 
-set(SOURCE_FILES
-  src/s2e_user.cpp
-  src/simulation/case/user_case.cpp
-  src/simulation/spacecraft/user_satellite.cpp
-  src/simulation/spacecraft/user_components.cpp
-)
+# Add all cpp files as SOURCE_FILES
+file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
+# Uncomment the following line to exclude any files that match the REGEX from SOURCE_FILES
+# list(FILTER SOURCE_FILES EXCLUDE REGEX ${CMAKE_CURRENT_LIST_DIR}/src/example.cpp)
+
 # Create executable file
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 ## cspice library
-if(CYGWIN)
+if(APPLE)
+  if(APPLE_SILICON)  
+    # APPLE Silicon
+    set(CSPICE_LIB_DIR ${CSPICE_DIR}/cspice_apple_silicon64/lib)
+  else()
+    # APPLE Intel
+    set(CSPICE_LIB_DIR ${CSPICE_DIR}/cspice_apple_intel64/lib)
+  endif()
+elseif(CYGWIN)
   SET (CMAKE_FIND_LIBRARY_SUFFIXES ".so" ".a")
   set(CSPICE_LIB_DIR ${CSPICE_DIR}/cspice_cygwin/lib)
 elseif(UNIX)
@@ -116,9 +123,15 @@ endif()
 
 if(WIN32)
   SET (CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
-  find_library(CSPICE_LIB
-    NAMES cspice.lib csupport.lib
-    PATHS ${CSPICE_DIR}/cspice_msvs/lib)
+  if(BUILD_64BIT)
+    find_library(CSPICE_LIB
+      NAMES cspice.lib csupport.lib
+      PATHS ${CSPICE_DIR}/cspice_msvs64/lib)
+  else()
+    find_library(CSPICE_LIB
+      NAMES cspice.lib csupport.lib
+      PATHS ${CSPICE_DIR}/cspice_msvs/lib)
+  endif()
 else()
   find_library(CSPICE_LIB
     NAMES cspice.a csupport.a
@@ -146,9 +159,15 @@ elseif(UNIX)
   endif()
 elseif(WIN32)
   SET (CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
-  find_library(NRLMSISE00_LIB 
-    NAMES libnrlmsise00.lib
-    PATHS ${NRLMSISE00_DIR}/lib)
+  if(BUILD_64BIT)
+    find_library(NRLMSISE00_LIB 
+      NAMES libnrlmsise00.lib
+      PATHS ${NRLMSISE00_DIR}/lib64)
+  else()
+    find_library(NRLMSISE00_LIB 
+      NAMES libnrlmsise00.lib
+      PATHS ${NRLMSISE00_DIR}/lib)
+  endif()
 endif()
 if(NOT NRLMSISE00_LIB)
   message(FATAL_ERROR "nrlmsise00 not found in ${EXT_LIB_DIR}")
