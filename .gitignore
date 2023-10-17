@@ -1,6 +1,7 @@
 # CMake and VS directories
 CMakeBuilds/
 .vs/
+.vscode/
 
 # Log files
 data/logs/

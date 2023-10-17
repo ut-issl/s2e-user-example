@@ -6,6 +6,7 @@
 #include "user_components.hpp"
 
 #include <library/initialize/initialize_file_access.hpp>
+#include <library/utilities/macros.hpp>
 
 UserComponents::UserComponents(const Dynamics *dynamics, Structure *structure, const LocalEnvironment *local_environment,
                                const GlobalEnvironment *global_environment, const SimulationConfiguration *configuration,
@@ -15,6 +16,15 @@ UserComponents::UserComponents(const Dynamics *dynamics, Structure *structure, c
       structure_(structure),
       local_environment_(local_environment),
       global_environment_(global_environment) {
+  // These variables are unused because this is a sample code.
+  UNUSED(spacecraft_id);
+  UNUSED(configuration_);
+  UNUSED(dynamics_);
+  UNUSED(structure_);
+  UNUSED(local_environment_);
+  UNUSED(global_environment_);
+
+  // Component instances
   obc_ = new OnBoardComputer(clock_generator);
 }
 
