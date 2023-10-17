@@ -51,6 +51,4 @@ Vector<3> UserComponents::GenerateTorque_b_Nm() {
   return torque_b_Nm;
 }
 
-void UserComponents::LogSetup(Logger &logger) {
-  logger.AddLogList(gyro_sensor_);
-}
+void UserComponents::LogSetup(Logger &logger) { logger.AddLogList(gyro_sensor_); }
