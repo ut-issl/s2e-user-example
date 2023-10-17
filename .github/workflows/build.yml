@@ -77,13 +77,13 @@ jobs:
         working-directory: ./s2e-core/ExtLibraries
         run: |
           ls cspice
-          ls cspice/cspice_msvs/lib
+          ls cspice/cspice_msvs*/lib
           ls cspice/include
           ls cspice/generic_kernels
           ls nrlmsise00
           ls nrlmsise00/table
-          ls nrlmsise00/lib
-          ls nrlmsise00/lib/libnrlmsise00.lib
+          ls nrlmsise00/lib*
+          ls nrlmsise00/lib*/libnrlmsise00.lib
           ls nrlmsise00/src
 
       - name: build 32bit
