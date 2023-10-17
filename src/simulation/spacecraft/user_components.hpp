@@ -13,6 +13,7 @@
 #include <simulation/spacecraft/installed_components.hpp>
 
 // include for components
+#include <components/real/aocs/gyro_sensor.hpp>
 #include <components/real/cdh/on_board_computer.hpp>
 
 class UserComponents : public InstalledComponents {
@@ -27,7 +28,8 @@ class UserComponents : public InstalledComponents {
 
  private:
   // Components
-  OnBoardComputer *obc_;  //!< Onboard Computer
+  OnBoardComputer *obc_;     //!< Onboard Computer
+  GyroSensor *gyro_sensor_;  //!< Gyro sensor
 
   // States
   const SimulationConfiguration *configuration_;  //!< Simulation settings
@@ -38,4 +40,3 @@ class UserComponents : public InstalledComponents {
 };
 
 #endif  // S2E_SIMULATION_SPACECRAFT_USER_COMPONENTS_HPP_
-
