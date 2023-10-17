@@ -50,7 +50,7 @@ jobs:
       - name: build extlib 32bit
         if: steps.cache-extlib.outputs.cache-hit != 'true' && matrix.build_bit == 'BUILD_64BIT=OFF'
         shell: powershell
-        working-directory: ./ExtLibraries
+        working-directory: ./s2e-core/ExtLibraries
         run: |
           $extlib_dir=(pwd).Path
           cmake -G "Visual Studio 17 2022" -A Win32 -DCMAKE_CONFIGURATION_TYPES:STRING="Debug" -DEXT_LIB_DIR="${extlib_dir}" -D${{ matrix.build_bit }}
@@ -59,7 +59,7 @@ jobs:
       - name: build extlib 64bit
         if: steps.cache-extlib.outputs.cache-hit != 'true' && matrix.build_bit == 'BUILD_64BIT=ON'
         shell: powershell
-        working-directory: ./ExtLibraries
+        working-directory: ./s2e-core/ExtLibraries
         run: |
           $extlib_dir=(pwd).Path
           cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_CONFIGURATION_TYPES:STRING="Debug" -DEXT_LIB_DIR="${extlib_dir}" -D${{ matrix.build_bit }}
