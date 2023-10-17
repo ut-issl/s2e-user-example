@@ -44,7 +44,7 @@ jobs:
         id: cache-extlib
         uses: actions/cache@v3
         with:
-          key: extlib-${{ runner.os }}-${{ hashFiles('./s2e-core/ExtLibraries/**') }}
+          key: extlib-${{ runner.os }}-${{ hashFiles('./s2e-core/ExtLibraries/**') }}-${{ matrix.build_bit }}
           path: ./s2e-core/ExtLibraries
 
       - name: build extlib 32bit
