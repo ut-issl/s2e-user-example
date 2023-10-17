@@ -44,7 +44,8 @@ int main(int argc, char *argv[])
   start = system_clock::now();
 
   std::string data_path = "../../data/";
-  std::string ini_file = "../../data/initialize_files/user_simulation_base.ini";
+  std::string ini_path = INI_FILE_DIR_FROM_EXE;
+  std::string ini_file = ini_path + "/user_simulation_base.ini";
 
   // Parsing arguments:  SatAttSim <data_path> [ini_file]
   if (argc == 0) {
