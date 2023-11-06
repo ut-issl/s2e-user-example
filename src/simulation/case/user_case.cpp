@@ -12,16 +12,18 @@ UserCase::~UserCase() { delete spacecraft_; }
 void UserCase::InitializeTargetObjects() {
   // Instantiate the target of the simulation
   // `spacecraft_id` corresponds to the index of `spacecraft_file` in simulation_base.ini
-  const int spacecraft_id = 0;
-  spacecraft_ = new UserSatellite(&simulation_configuration_, global_environment_, spacecraft_id);
+  spacecraft_ = new UserSatellite(&simulation_configuration_, global_environment_, 0);
+  spacecraft2_ = new UserSatellite(&simulation_configuration_, global_environment_, 1);
 
   // Register the log output
   spacecraft_->LogSetup(*(simulation_configuration_.main_logger_));
+  spacecraft2_->LogSetup(*(simulation_configuration_.main_logger_));
 }
 
 void UserCase::UpdateTargetObjects() {
   // Spacecraft Update
   spacecraft_->Update(&(global_environment_->GetSimulationTime()));
+  spacecraft2_->Update(&(global_environment_->GetSimulationTime()));
 }
 
 std::string UserCase::GetLogHeader() const {

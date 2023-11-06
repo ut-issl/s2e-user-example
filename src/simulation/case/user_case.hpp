@@ -39,7 +39,8 @@ class UserCase : public SimulationCase {
   virtual std::string GetLogValue() const;
 
  private:
-  UserSatellite *spacecraft_;  //!< Instance of spacecraft
+  UserSatellite *spacecraft_;   //!< Instance of 1st spacecraft
+  UserSatellite *spacecraft2_;  //!< Instance of 2nd spacecraft
 
   /**
    * @fn InitializeTargetObjects
