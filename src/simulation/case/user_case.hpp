@@ -7,6 +7,7 @@
 #define S2E_SIMULATION_CASE_USER_CASE_HPP_
 
 #include <./simulation/case/simulation_case.hpp>
+#include <./simulation/monte_carlo_simulation/monte_carlo_simulation_executor.hpp>
 
 #include "../spacecraft/user_satellite.hpp"
 
@@ -19,8 +20,12 @@ class UserCase : public SimulationCase {
   /**
    * @fn UserCase
    * @brief Constructor
+   * @param[in] initialize_base_file: Initialize base file path
+   * @param[in] monte_carlo_simulator: Monte Carlo simulator
+   * @param[in] log_path: Log output file path
    */
-  UserCase(const std::string initialise_base_file);
+  UserCase(const std::string initialize_base_file, MonteCarloSimulationExecutor &monte_carlo_simulator, const std::string log_path);
+
   /**
    * @fn ~UserCase
    * @brief Destructor
@@ -40,6 +45,8 @@ class UserCase : public SimulationCase {
 
  private:
   UserSatellite *spacecraft_;  //!< Instance of spacecraft
+
+  MonteCarloSimulationExecutor &monte_carlo_simulator_;  //!< Monte Carlo simulator
 
   /**
    * @fn InitializeTargetObjects
