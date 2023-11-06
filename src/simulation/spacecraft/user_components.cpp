@@ -24,11 +24,21 @@ UserComponents::UserComponents(const Dynamics *dynamics, Structure *structure, c
   UNUSED(local_environment_);
   UNUSED(global_environment_);
 
+  // ini file access
+  IniAccess spacecraft_ini_file = IniAccess(configuration_->spacecraft_file_list_[spacecraft_id]);
+  std::string component_file_name;
+
   // Component instances
   obc_ = new OnBoardComputer(clock_generator);
+
+  // Clock Sensor
+  component_file_name = spacecraft_ini_file.ReadString("COMPONENT_FILES", "clock_sensor_file");
+  configuration_->main_logger_->CopyFileToLogDirectory(component_file_name);
+  clock_sensor_ = new ClockSensor(InitClockSensor(clock_generator, global_environment->GetSimulationTime(), component_file_name));
 }
 
 UserComponents::~UserComponents() {
+  delete clock_sensor_;
   // OBC must be deleted the last since it has com ports
   delete obc_;
 }
@@ -47,5 +57,5 @@ Vector<3> UserComponents::GenerateTorque_b_Nm() {
 
 void UserComponents::LogSetup(Logger &logger) {
   // Users can set log output when they need component log
-  UNUSED(logger);
+  logger.AddLogList(clock_sensor_);
 }

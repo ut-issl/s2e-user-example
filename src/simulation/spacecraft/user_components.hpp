@@ -15,6 +15,8 @@
 // include for components
 #include <components/real/cdh/on_board_computer.hpp>
 
+#include "../../components/clock_sensor.hpp"
+
 class UserComponents : public InstalledComponents {
  public:
   UserComponents(const Dynamics *dynamics, Structure *structure, const LocalEnvironment *local_environment,
@@ -27,7 +29,8 @@ class UserComponents : public InstalledComponents {
 
  private:
   // Components
-  OnBoardComputer *obc_;  //!< Onboard Computer
+  OnBoardComputer *obc_;       //!< Onboard Computer
+  ClockSensor *clock_sensor_;  //!< Clock sensor
 
   // States
   const SimulationConfiguration *configuration_;  //!< Simulation settings
@@ -38,4 +41,3 @@ class UserComponents : public InstalledComponents {
 };
 
 #endif  // S2E_SIMULATION_SPACECRAFT_USER_COMPONENTS_HPP_
-
