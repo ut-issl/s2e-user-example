@@ -15,9 +15,11 @@
 #include <string>
 
 // Simulator includes
-#include "library/logger/logger.hpp"
+#include "library/logger/initialize_log.hpp"
 
 // Add custom include files
+#include <./simulation/monte_carlo_simulation/initialize_monte_carlo_simulation.hpp>
+
 #include "./simulation/case/user_case.hpp"
 
 void print_path(std::string path) {
@@ -66,9 +68,26 @@ int main(int argc, char *argv[])
   std::cout << "\tIni file: ";
   print_path(ini_file);
 
-  auto simulation_case = UserCase(ini_file);
-  simulation_case.Initialize();
-  simulation_case.Main();
+  MonteCarloSimulationExecutor *mc_simulator = InitMonteCarloSimulation(ini_file);
+  Logger *log_mc_simulator = InitMonteCarloLog(ini_file, mc_simulator->IsEnabled());
+
+  while (mc_simulator->WillExecuteNextCase()) {
+    auto simulation_case = UserCase(ini_file, *mc_simulator, log_mc_simulator->GetLogPath());
+    // Initialize
+    log_mc_simulator->AddLogList(&simulation_case);
+    if (mc_simulator->GetNumberOfExecutionsDone() == 0) log_mc_simulator->WriteHeaders();
+    simulation_case.Initialize();
+
+    // Main
+    log_mc_simulator->WriteValues();  // log initial value
+    simulation_case.Main();
+    mc_simulator->AtTheEndOfEachCase();
+    log_mc_simulator->WriteValues();  // log final value
+    log_mc_simulator->ClearLogList();
+  }
+
+  delete log_mc_simulator;
+  delete mc_simulator;
 
   end = system_clock::now();
   double time = static_cast<double>(duration_cast<microseconds>(end - start).count() / 1000000.0);
