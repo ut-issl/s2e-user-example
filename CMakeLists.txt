@@ -10,7 +10,7 @@ project(S2E_USER_EXAMPLE
 
 # build config
 option(USE_HILS "Use HILS" OFF)
-option(USE_C2A "Use C2A" OFF)
+option(USE_C2A "Use C2A" ON)
 option(BUILD_64BIT "Build 64bit" OFF)
 option(GOOGLE_TEST "Execute GoogleTest" OFF)
 
@@ -39,7 +39,7 @@ if(NOT DEFINED FLIGHT_SW_DIR)
   set(FLIGHT_SW_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../FlightSW)
 endif()
 if(NOT DEFINED C2A_NAME)
-  set(C2A_NAME "c2a_oss")
+  set(C2A_NAME "c2a-core/Examples/minimum_user")
 endif()
 
 ## Directory path for ini files

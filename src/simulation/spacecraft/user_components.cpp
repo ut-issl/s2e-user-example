@@ -8,6 +8,10 @@
 #include <library/initialize/initialize_file_access.hpp>
 #include <library/utilities/macros.hpp>
 
+#ifdef USE_C2A
+#include "src_user/Settings/port_config.h"
+#endif
+
 UserComponents::UserComponents(const Dynamics *dynamics, Structure *structure, const LocalEnvironment *local_environment,
                                const GlobalEnvironment *global_environment, const SimulationConfiguration *configuration,
                                ClockGenerator *clock_generator, const unsigned int spacecraft_id)
@@ -25,10 +29,16 @@ UserComponents::UserComponents(const Dynamics *dynamics, Structure *structure, c
   UNUSED(global_environment_);
 
   // Component instances
-  obc_ = new OnBoardComputer(clock_generator);
+#ifdef USE_C2A
+  obc_ = new ObcWithC2a(clock_generator, 100);
+  exp_serial_communication_ = new ExampleSerialCommunicationWithObc(clock_generator, 1, 1, obc_);
+
+  obc_->ConnectComPort(PORT_CH_RS422_MOBC_EXT, 1024, 1024);  // UART通信用にとりあえず繋いでおく
+#endif
 }
 
 UserComponents::~UserComponents() {
+  delete exp_serial_communication_;
   // OBC must be deleted the last since it has com ports
   delete obc_;
 }
