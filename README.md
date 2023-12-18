@@ -32,5 +32,5 @@ This repository provides the following samples.
 
 ## How to use this branch
 
-- This branch is a sample code for [How To Make New Simulation Scenario](https://github.com/ut-issl/s2e-documents/blob/develop/Tutorials/HowToMakeNewSimulationScenario.md) in the `s2e-documents`.
+- This branch is a sample code for [How to simulate multiple satellites](https://github.com/ut-issl/s2e-documents/blob/develop/Tutorials/HowToSimulateMultipleSatellites.md) in the `s2e-documents`.
 - Please follow the tutorial to learn how to use the sample code.
