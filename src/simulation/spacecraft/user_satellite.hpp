@@ -13,14 +13,14 @@
  * @class UserSatellite
  * @brief An example of user side spacecraft class
  */
-class UserSatellite : public Spacecraft
+class UserSatellite : public s2e::spacecraft::Spacecraft
 {
 public:
   /**
    * @fn UserSatellite
    * @brief Constructor
    */
-  UserSatellite(const SimulationConfiguration *simulation_configuration, const GlobalEnvironment *global_environment,
+  UserSatellite(const s2e::simulation::SimulationConfiguration *simulation_configuration, const s2e::environment::GlobalEnvironment *global_environment,
                 const unsigned int spacecraft_id);
 
 private:

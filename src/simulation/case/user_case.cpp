@@ -5,7 +5,7 @@
 
 #include "user_case.hpp"
 
-UserCase::UserCase(const std::string initialise_base_file) : SimulationCase(initialise_base_file) {}
+UserCase::UserCase(const std::string initialise_base_file) : s2e::simulation::SimulationCase(initialise_base_file) {}
 
 UserCase::~UserCase() { delete spacecraft_; }
 

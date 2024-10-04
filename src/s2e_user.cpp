@@ -15,7 +15,7 @@
 #include <string>
 
 // Simulator includes
-#include "library/logger/logger.hpp"
+#include "logger/logger.hpp"
 
 // Add custom include files
 #include "./simulation/case/user_case.hpp"
@@ -43,26 +43,26 @@ int main(int argc, char *argv[])
   system_clock::time_point start, end;
   start = system_clock::now();
 
-  std::string data_path = "../../data/";
-  std::string ini_path = INI_FILE_DIR_FROM_EXE;
+  std::string settings_path = "../settings/";
+  std::string ini_path = SETTINGS_DIR_FROM_EXE;
   std::string ini_file = ini_path + "/user_simulation_base.ini";
 
-  // Parsing arguments:  SatAttSim <data_path> [ini_file]
+  // Parsing arguments:  S2E <settings_path> [ini_file]
   if (argc == 0) {
-    std::cout << "Usage: SatAttSim <data_path> [ini file path]" << std::endl;
+    std::cout << "Usage: S2E <settings_path> [ini file path]" << std::endl;
     return EXIT_FAILURE;
   }
   if (argc > 1) {
-    data_path = std::string(argv[1]);
-    if (data_path.back() != '/') data_path += "/";
+    settings_path = std::string(argv[1]);
+    if (settings_path.back() != '/') settings_path += "/";
   }
   if (argc > 2) {
     ini_file = std::string(argv[2]);
   }
 
   std::cout << "Starting simulation..." << std::endl;
-  std::cout << "\tData path: ";
-  print_path(data_path);
+  std::cout << "\tSettings path: ";
+  print_path(settings_path);
   std::cout << "\tIni file: ";
   print_path(ini_file);
 
