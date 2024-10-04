@@ -5,14 +5,13 @@ cmake_minimum_required(VERSION 3.13)
 project(S2E_USER_EXAMPLE
   LANGUAGES CXX
   DESCRIPTION "s2e-user-example: An example of S2E user side repository"
-  VERSION 0.0.0
+  VERSION 1.0.0
 )
 
 # build config
 option(USE_HILS "Use HILS" OFF)
 option(USE_C2A "Use C2A" OFF)
 option(BUILD_64BIT "Build 64bit" OFF)
-option(GOOGLE_TEST "Execute GoogleTest" OFF)
 
 # Mac user setting
 option(APPLE_SILICON "Build with Apple Silicon" OFF)
@@ -44,7 +43,7 @@ endif()
 
 ## Directory path for ini files
 if(NOT DEFINED INI_FILE_DIR_FROM_EXE)
-  set(INI_FILE_DIR_FROM_EXE ../../data/initialize_files)
+  set(INI_FILE_DIR_FROM_EXE ../../settings)
 endif()
 
 if(NOT DEFINED EXT_LIB_DIR_FROM_EXE)
@@ -90,8 +89,12 @@ add_subdirectory(${S2E_CORE_DIR}/src/disturbances s2e_core/disturbances)
 add_subdirectory(${S2E_CORE_DIR}/src/dynamics s2e_core/dynamics)
 add_subdirectory(${S2E_CORE_DIR}/src/environment/global s2e_core/environment/global)
 add_subdirectory(${S2E_CORE_DIR}/src/environment/local s2e_core/environment/local)
-add_subdirectory(${S2E_CORE_DIR}/src/library s2e_core/library)
+add_subdirectory(${S2E_CORE_DIR}/src/logger s2e_core/logger)
+add_subdirectory(${S2E_CORE_DIR}/src/math_physics s2e_core/math_physics)
+add_subdirectory(${S2E_CORE_DIR}/src/setting_file_reader s2e_core/setting_file_reader)
 add_subdirectory(${S2E_CORE_DIR}/src/simulation s2e_core/simulation)
+add_subdirectory(${S2E_CORE_DIR}/src/utilities s2e_core/utilities)
+add_subdirectory(${S2E_CORE_DIR}/ExtLibraries/inih)
 
 # Add all cpp files as SOURCE_FILES
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
@@ -178,13 +181,14 @@ set(S2E_LIBRARIES
   IGRF WRAPPER_NRLMSISE00 INIH SGP4 UTIL OPTICS RELATIVE_ORBIT_MODELS ORBIT_MODELS GEODESY MATH
 )
 # Initialize link
-target_link_libraries(COMPONENT DYNAMICS GLOBAL_ENVIRONMENT LOCAL_ENVIRONMENT LIBRARY)
-target_link_libraries(DYNAMICS GLOBAL_ENVIRONMENT LOCAL_ENVIRONMENT SIMULATION LIBRARY)
-target_link_libraries(DISTURBANCE DYNAMICS GLOBAL_ENVIRONMENT LOCAL_ENVIRONMENT LIBRARY)
-target_link_libraries(SIMULATION DYNAMICS GLOBAL_ENVIRONMENT LOCAL_ENVIRONMENT DISTURBANCE LIBRARY)
-target_link_libraries(GLOBAL_ENVIRONMENT ${CSPICE_LIB} LIBRARY)
-target_link_libraries(LOCAL_ENVIRONMENT GLOBAL_ENVIRONMENT ${CSPICE_LIB} LIBRARY)
-target_link_libraries(LIBRARY ${NRLMSISE00_LIB})
+target_link_libraries(COMPONENT DYNAMICS GLOBAL_ENVIRONMENT LOCAL_ENVIRONMENT MATH_PHYSICS SETTING_FILE_READER LOGGER UTILITIES)
+target_link_libraries(DYNAMICS GLOBAL_ENVIRONMENT LOCAL_ENVIRONMENT SIMULATION MATH_PHYSICS)
+target_link_libraries(DISTURBANCE DYNAMICS GLOBAL_ENVIRONMENT LOCAL_ENVIRONMENT MATH_PHYSICS)
+target_link_libraries(SIMULATION DYNAMICS GLOBAL_ENVIRONMENT LOCAL_ENVIRONMENT DISTURBANCE MATH_PHYSICS)
+target_link_libraries(GLOBAL_ENVIRONMENT ${CSPICE_LIB} MATH_PHYSICS)
+target_link_libraries(LOCAL_ENVIRONMENT GLOBAL_ENVIRONMENT ${CSPICE_LIB} MATH_PHYSICS)
+target_link_libraries(MATH_PHYSICS ${NRLMSISE00_LIB})
+target_link_libraries(SETTING_FILE_READER INIH)
 
 target_link_libraries(${PROJECT_NAME} DYNAMICS)
 target_link_libraries(${PROJECT_NAME} DISTURBANCE)
