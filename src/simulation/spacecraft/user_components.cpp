@@ -9,27 +9,34 @@
 #include <utilities/macros.hpp>
 
 UserComponents::UserComponents(const s2e::dynamics::Dynamics *dynamics, s2e::spacecraft::Structure *structure,
-                 const s2e::environment::LocalEnvironment *local_environment, const s2e::environment::GlobalEnvironment *global_environment,
-                 const s2e::simulation::SimulationConfiguration *configuration, s2e::environment::ClockGenerator *clock_generator,
-                 const unsigned int spacecraft_id)
+                               const s2e::environment::LocalEnvironment *local_environment,
+                               const s2e::environment::GlobalEnvironment *global_environment,
+                               const s2e::simulation::SimulationConfiguration *configuration, s2e::environment::ClockGenerator *clock_generator,
+                               const unsigned int spacecraft_id)
     : configuration_(configuration),
       dynamics_(dynamics),
       structure_(structure),
       local_environment_(local_environment),
       global_environment_(global_environment) {
   // These variables are unused because this is a sample code.
-  UNUSED(spacecraft_id);
-  UNUSED(configuration_);
-  UNUSED(dynamics_);
   UNUSED(structure_);
   UNUSED(local_environment_);
-  UNUSED(global_environment_);
 
   // Component instances
   obc_ = new s2e::components::OnBoardComputer(clock_generator);
+
+  // Common
+  s2e::setting_file_reader::IniAccess iniAccess = s2e::setting_file_reader::IniAccess(configuration_->spacecraft_file_list_[spacecraft_id]);
+  const double compo_step_sec = global_environment_->GetSimulationTime().GetComponentStepTime_s();
+
+  // Initialize of GYRO class
+  std::string file_name = iniAccess.ReadString("COMPONENT_FILES", "gyro_file");
+  configuration_->main_logger_->CopyFileToLogDirectory(file_name);
+  gyro_sensor_ = new s2e::components::GyroSensor(s2e::components::InitGyroSensor(clock_generator, 1, file_name, compo_step_sec, dynamics_));
 }
 
 UserComponents::~UserComponents() {
+  delete gyro_sensor_;
   // OBC must be deleted the last since it has com ports
   delete obc_;
 }
@@ -46,7 +53,4 @@ s2e::math::Vector<3> UserComponents::GenerateTorque_b_Nm() {
   return torque_b_Nm;
 }
 
-void UserComponents::LogSetup(s2e::logger::Logger &logger) {
-  // Users can set log output when they need component log
-  UNUSED(logger);
-}
+void UserComponents::LogSetup(s2e::logger::Logger &logger) { logger.AddLogList(gyro_sensor_); }
