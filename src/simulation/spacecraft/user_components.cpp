@@ -9,9 +9,10 @@
 #include <utilities/macros.hpp>
 
 UserComponents::UserComponents(const s2e::dynamics::Dynamics *dynamics, s2e::spacecraft::Structure *structure,
-                 const s2e::environment::LocalEnvironment *local_environment, const s2e::environment::GlobalEnvironment *global_environment,
-                 const s2e::simulation::SimulationConfiguration *configuration, s2e::environment::ClockGenerator *clock_generator,
-                 const unsigned int spacecraft_id)
+                               const s2e::environment::LocalEnvironment *local_environment,
+                               const s2e::environment::GlobalEnvironment *global_environment,
+                               const s2e::simulation::SimulationConfiguration *configuration, s2e::environment::ClockGenerator *clock_generator,
+                               const unsigned int spacecraft_id)
     : configuration_(configuration),
       dynamics_(dynamics),
       structure_(structure),
