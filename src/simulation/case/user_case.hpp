@@ -14,7 +14,7 @@
  * @class UserCase
  * @brief An example of user defined simulation case
  */
-class UserCase : public SimulationCase {
+class UserCase : public s2e::simulation::SimulationCase {
  public:
   /**
    * @fn UserCase

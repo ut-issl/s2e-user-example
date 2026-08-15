@@ -7,24 +7,23 @@
 #define S2E_SIMULATION_SPACECRAFT_USER_SATELLITE_HPP_
 
 #include <simulation/spacecraft/spacecraft.hpp>
+
 #include "user_components.hpp"
 
 /**
  * @class UserSatellite
  * @brief An example of user side spacecraft class
  */
-class UserSatellite : public Spacecraft
-{
-public:
+class UserSatellite : public s2e::spacecraft::Spacecraft {
+ public:
   /**
    * @fn UserSatellite
    * @brief Constructor
    */
-  UserSatellite(const SimulationConfiguration *simulation_configuration, const GlobalEnvironment *global_environment,
-                const unsigned int spacecraft_id);
+  UserSatellite(const s2e::simulation::SimulationConfiguration *simulation_configuration,
+                const s2e::environment::GlobalEnvironment *global_environment, const unsigned int spacecraft_id);
 
-private:
+ private:
 };
 
-#endif // S2E_SIMULATION_SPACECRAFT_USER_SATELLITE_HPP_
-
+#endif  // S2E_SIMULATION_SPACECRAFT_USER_SATELLITE_HPP_
