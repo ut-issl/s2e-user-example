@@ -13,7 +13,12 @@
 #include <simulation/spacecraft/installed_components.hpp>
 
 // include for components
-#include <components/real/cdh/on_board_computer.hpp>
+#include <components/real/aocs/gyro_sensor.hpp>
+#include <components/real/aocs/reaction_wheel.hpp>
+
+#include "../../components/user_on_board_computer.hpp"
+
+class UserOnBoardComputer;
 
 class UserComponents : public s2e::spacecraft::InstalledComponents {
  public:
@@ -25,10 +30,15 @@ class UserComponents : public s2e::spacecraft::InstalledComponents {
   s2e::math::Vector<3> GenerateForce_b_N();
   s2e::math::Vector<3> GenerateTorque_b_Nm();
   void LogSetup(s2e::logger::Logger &logger);
+  // Getter
+  inline s2e::components::GyroSensor &GetGyroSensor() { return *gyro_sensor_; }
+  inline s2e::components::ReactionWheel &GetReactionWheel() { return *reaction_wheel_; }
 
  private:
   // Components
-  s2e::components::OnBoardComputer *obc_;  //!< Onboard Computer
+  UserOnBoardComputer *obc_;       //!< Onboard Computer
+  s2e::components::GyroSensor *gyro_sensor_;        //!< Gyro sensor
+  s2e::components::ReactionWheel *reaction_wheel_;  //!< Reaction wheel
 
   // States
   const s2e::simulation::SimulationConfiguration *configuration_;  //!< Simulation settings
