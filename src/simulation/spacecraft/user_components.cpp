@@ -8,6 +8,10 @@
 #include <setting_file_reader/initialize_file_access.hpp>
 #include <utilities/macros.hpp>
 
+#ifdef USE_C2A
+#include "src_user/Settings/port_config.h"
+#endif
+
 UserComponents::UserComponents(const s2e::dynamics::Dynamics *dynamics, s2e::spacecraft::Structure *structure,
                                const s2e::environment::LocalEnvironment *local_environment,
                                const s2e::environment::GlobalEnvironment *global_environment,
@@ -27,10 +31,16 @@ UserComponents::UserComponents(const s2e::dynamics::Dynamics *dynamics, s2e::spa
   UNUSED(global_environment_);
 
   // Component instances
-  obc_ = new s2e::components::OnBoardComputer(clock_generator);
+#ifdef USE_C2A
+  obc_ = new ObcWithC2a(clock_generator, 100);
+  exp_serial_communication_ = new ExampleSerialCommunicationWithObc(clock_generator, 1, 1, obc_);
+
+  obc_->ConnectComPort(PORT_CH_RS422_MOBC_EXT, 1024, 1024);  // UART通信用にとりあえず繋いでおく
+#endif
 }
 
 UserComponents::~UserComponents() {
+  delete exp_serial_communication_;
   // OBC must be deleted the last since it has com ports
   delete obc_;
 }

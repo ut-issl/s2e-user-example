@@ -13,7 +13,8 @@
 #include <simulation/spacecraft/installed_components.hpp>
 
 // include for components
-#include <components/real/cdh/on_board_computer.hpp>
+#include <components/examples/example_serial_communication_with_obc.hpp>
+#include <components/real/cdh/on_board_computer_with_c2a.hpp>
 
 class UserComponents : public s2e::spacecraft::InstalledComponents {
  public:
@@ -28,7 +29,8 @@ class UserComponents : public s2e::spacecraft::InstalledComponents {
 
  private:
   // Components
-  s2e::components::OnBoardComputer *obc_;  //!< Onboard Computer
+  s2e::components::ObcWithC2a *obc_;                                              //!< Onboard Computer with C2A
+  s2e::components::ExampleSerialCommunicationWithObc *exp_serial_communication_;  //!< example for serial communication
 
   // States
   const s2e::simulation::SimulationConfiguration *configuration_;  //!< Simulation settings
