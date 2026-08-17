@@ -30,6 +30,22 @@ jobs:
         with:
           submodules: recursive
 
+      - name: use HTTPS to download NRLMSISE00 table
+        shell: bash
+        run: |
+          cmake_file="s2e-core/ExtLibraries/nrlmsise00/CMakeLists.txt"
+          ftp_url="ftp://ftp.agi.com/pub/DynamicEarthData"
+          https_url="https://data.agi.com/pub/DynamicEarthData"
+
+          if grep -Fq "$ftp_url" "$cmake_file"; then
+            sed -i "s|$ftp_url|$https_url|g" "$cmake_file"
+          elif ! grep -Fq "$https_url" "$cmake_file"; then
+            echo "NRLMSISE00 table URL was not found in $cmake_file" >&2
+            exit 1
+          fi
+
+          grep -F "set(NRLMSISE_TABLE_URL_BASE $https_url)" "$cmake_file"
+
       - name: Configure build for x86
         uses: ilammy/msvc-dev-cmd@v1
         with:
@@ -53,7 +69,8 @@ jobs:
         working-directory: ./s2e-core/ExtLibraries
         run: |
           $extlib_dir=(pwd).Path
-          cmake -G "Visual Studio 17 2022" -A Win32 -DCMAKE_CONFIGURATION_TYPES:STRING="Debug" -DEXT_LIB_DIR="${extlib_dir}" -D${{ matrix.build_bit }}
+          $settings_dir=(Resolve-Path "../../settings").Path
+          cmake -G "Visual Studio 17 2022" -A Win32 -DCMAKE_CONFIGURATION_TYPES:STRING="Debug" -DEXT_LIB_DIR="${extlib_dir}" -DSETTINGS_DIR="${settings_dir}" -D${{ matrix.build_bit }}
           cmake --build .
 
       - name: build extlib 64bit
@@ -62,7 +79,8 @@ jobs:
         working-directory: ./s2e-core/ExtLibraries
         run: |
           $extlib_dir=(pwd).Path
-          cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_CONFIGURATION_TYPES:STRING="Debug" -DEXT_LIB_DIR="${extlib_dir}" -D${{ matrix.build_bit }}
+          $settings_dir=(Resolve-Path "../../settings").Path
+          cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_CONFIGURATION_TYPES:STRING="Debug" -DEXT_LIB_DIR="${extlib_dir}" -DSETTINGS_DIR="${settings_dir}" -D${{ matrix.build_bit }}
           cmake --build .
 
       - name: install extlib
@@ -118,6 +136,22 @@ jobs:
         with:
           submodules: recursive
 
+      - name: use HTTPS to download NRLMSISE00 table
+        shell: bash
+        run: |
+          cmake_file="s2e-core/ExtLibraries/nrlmsise00/CMakeLists.txt"
+          ftp_url="ftp://ftp.agi.com/pub/DynamicEarthData"
+          https_url="https://data.agi.com/pub/DynamicEarthData"
+
+          if grep -Fq "$ftp_url" "$cmake_file"; then
+            sed -i "s|$ftp_url|$https_url|g" "$cmake_file"
+          elif ! grep -Fq "$https_url" "$cmake_file"; then
+            echo "NRLMSISE00 table URL was not found in $cmake_file" >&2
+            exit 1
+          fi
+
+          grep -F "set(NRLMSISE_TABLE_URL_BASE $https_url)" "$cmake_file"
+
       - name: set compiler
         id: compiler
         run: |
@@ -157,7 +191,8 @@ jobs:
         if: steps.cache-extlib.outputs.cache-hit != 'true'
         working-directory: ./s2e-core/ExtLibraries
         run: |
-          cmake -D${{ matrix.build_bit }} -DEXT_LIB_DIR="$(pwd)"
+          settings_dir="$(realpath ../../settings)"
+          cmake . -D${{ matrix.build_bit }} -DEXT_LIB_DIR="$(pwd)" -DSETTINGS_DIR="$settings_dir"
           cmake --build .
       - name: install extlib
         if: steps.cache-extlib.outputs.cache-hit != 'true'
