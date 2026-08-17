@@ -16,7 +16,7 @@ on:
 jobs:
   build_s2e_win:
     name: Build on Windows VS2022
-    runs-on: windows-2022
+    runs-on: windows-2025
     strategy:
       fail-fast: false
       matrix:
