@@ -37,22 +37,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: use HTTPS to download NRLMSISE00 table
-        shell: bash
-        run: |
-          cmake_file="s2e-core/ExtLibraries/nrlmsise00/CMakeLists.txt"
-          ftp_url="https://ftp.agi.com/pub/DynamicEarthData"
-          https_url="https://data.agi.com/pub/DynamicEarthData"
-
-          if grep -Fq "$ftp_url" "$cmake_file"; then
-            sed -i "s|$ftp_url|$https_url|g" "$cmake_file"
-          elif ! grep -Fq "$https_url" "$cmake_file"; then
-            echo "NRLMSISE00 table URL was not found in $cmake_file" >&2
-            exit 1
-          fi
-
-          grep -F "set(NRLMSISE_TABLE_URL_BASE $https_url)" "$cmake_file"
-
       - name: show tools version
         shell: powershell
         run: |
@@ -122,22 +106,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - name: use HTTPS to download NRLMSISE00 table
-        shell: bash
-        run: |
-          cmake_file="s2e-core/ExtLibraries/nrlmsise00/CMakeLists.txt"
-          ftp_url="https://ftp.agi.com/pub/DynamicEarthData"
-          https_url="https://data.agi.com/pub/DynamicEarthData"
-
-          if grep -Fq "$ftp_url" "$cmake_file"; then
-            sed -i "s|$ftp_url|$https_url|g" "$cmake_file"
-          elif ! grep -Fq "$https_url" "$cmake_file"; then
-            echo "NRLMSISE00 table URL was not found in $cmake_file" >&2
-            exit 1
-          fi
-
-          grep -F "set(NRLMSISE_TABLE_URL_BASE $https_url)" "$cmake_file"
 
       - name: set compiler
         id: compiler
